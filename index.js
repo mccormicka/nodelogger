@@ -20,63 +20,65 @@ var styles = {
     'yellow': ['\u001b[33m', '\u001b[39m']
 };
 
-var logger = {
+var levels = {
     TRACE: 0,
     INFO: 1,
     DEBUG: 2,
     WARN: 3,
     ERROR: 4,
-    SILENT: 5,
-    level: 0,
-    prefix: '',
-    color: styles.grey,
-
-    logLevel: function (level) {
-        this.level = level;
-    },
-
-    trace: function (message) {
-        if (this.level <= this.TRACE) {
-            this.prefix = 'TRACE';
-            this.color = styles.grey;
-            this._print(util.format.apply(null, arguments));
-        }
-    },
-
-    info: function (message) {
-        if (this.level <= this.INFO) {
-            this.prefix = 'INFO';
-            this.color = styles.white;
-            this._print(util.format.apply(null, arguments));
-        }
-    },
-
-    debug: function (message) {
-        if (this.level <= this.DEBUG) {
-            this.prefix = 'DEBUG';
-            this.color = styles.green;
-            this._print(util.format.apply(null, arguments));
-        }
-    },
-    warn: function (message) {
-        if (this.level <= this.WARN) {
-            this.prefix = 'WARN';
-            this.color = styles.yellow;
-            this._print(util.format.apply(null, arguments));
-        }
-    },
-
-    error: function (message) {
-        if (this.level <= this.ERROR) {
-            this.prefix = 'ERROR';
-            this.color = styles.red;
-            this._print(util.format.apply(null, arguments));
-        }
-    },
-
-    _print: function (message) {
-        console.log(this.color[0] + (this.prefix ? ( '[' + this.prefix + '] ') : '') + message + this.color[1]);
-    }
+    SILENT: 5
 };
 
-exports = module.exports = logger;
+var logger = function (prefix, level) {
+    return {
+        level: level ? level : 0,
+        color: styles.grey,
+
+        logLevel: function (level) {
+            this.level = level;
+        },
+
+        trace: function (message) {
+            if (this.level <= levels.TRACE) {
+                this.color = styles.grey;
+                this._print(util.format.apply(null, arguments));
+            }
+        },
+
+        info: function (message) {
+            if (this.level <= levels.INFO) {
+                this.color = styles.white;
+                this._print(util.format.apply(null, arguments));
+            }
+        },
+
+        debug: function (message) {
+            if (this.level <= levels.DEBUG) {
+                this.color = styles.green;
+                this._print(util.format.apply(null, arguments));
+            }
+        },
+        warn: function (message) {
+            if (this.level <= levels.WARN) {
+                this.color = styles.yellow;
+                this._print(util.format.apply(null, arguments));
+            }
+        },
+
+        error: function (message) {
+            if (this.level <= levels.ERROR) {
+                this.color = styles.red;
+                this._print(util.format.apply(null, arguments));
+            }
+        },
+
+        _print: function (message) {
+            console.log(this.color[0] + ( '[' + prefix + ']: ') + message + this.color[1]);
+        }
+    };
+};
+
+exports = module.exports = function (prefix, level) {
+    return new logger(prefix, level);
+};
+
