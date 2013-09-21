@@ -20,18 +20,9 @@ var styles = {
     'yellow': ['\u001b[33m', '\u001b[39m']
 };
 
-var levels = {
-    TRACE: 0,
-    INFO: 1,
-    DEBUG: 2,
-    WARN: 3,
-    ERROR: 4,
-    SILENT: 5
-};
-
 var logger = function (prefix, level) {
     return {
-        level: level ? level : 0,
+        level: level,
         color: styles.grey,
 
         logLevel: function (level) {
@@ -77,8 +68,22 @@ var logger = function (prefix, level) {
         }
     };
 };
+var levels = module.exports.levels = {
+    TRACE: 0,
+    INFO: 1,
+    DEBUG: 2,
+    WARN: 3,
+    ERROR: 4,
+    FATAL: 5,
+    SILENT: 6
+};
 
-exports = module.exports = function (prefix, level) {
+module.exports.level = 0;
+module.exports.Logger = function Logger(prefix, level) {
+    if (prefix.lastIndexOf('/') > -1) {
+        prefix = prefix.slice(prefix.lastIndexOf('/') + 1);
+    }
+    level = level ? level : module.exports.level;
     return new logger(prefix, level);
 };
 
